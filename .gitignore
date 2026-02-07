@@ -1,0 +1,33 @@
+# Dependencies
+node_modules/
+package-lock.json
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+venv/
+*.egg-info/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Editor/IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Pi Agent sensitive files (should never be committed)
+auth.json
+sessions/
+
+# Logs
+*.log
+
+# Environment files
+.env
+.env.local
+.env.*.local
