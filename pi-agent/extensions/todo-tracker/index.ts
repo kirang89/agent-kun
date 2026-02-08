@@ -194,7 +194,8 @@ For non-trivial tasks with multiple steps, use the \`todo\` tool to:
 1. Create a task list before starting work
 2. Mark tasks in-progress when beginning each one
 3. Mark tasks complete when finished
-Skip todos for simple questions or single-step tasks.`;
+Skip todos for simple questions or single-step tasks.
+Do NOT create todos when there are fewer than 3 tasks — just do the work directly.`;
 
 		return {
 			systemPrompt: event.systemPrompt + "\n" + guidance,
@@ -211,6 +212,9 @@ Skip todos for simple questions or single-step tasks.`;
 
 	pi.on("turn_start", async (_event, ctx) => {
 		state.currentCtx = ctx;
+		// Clear previous todos on each new user message
+		clearTodos();
+		ctx.ui.setWorkingMessage();
 		updateWidget(ctx);
 	});
 
@@ -244,7 +248,7 @@ Skip todos for simple questions or single-step tasks.`;
 			),
 		}),
 
-		async execute(toolCallId, params, onUpdate, ctx, signal) {
+		async execute(toolCallId, params, signal, onUpdate, ctx) {
 			state.currentCtx = ctx;
 			let result: string;
 
