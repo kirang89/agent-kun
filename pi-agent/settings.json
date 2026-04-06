@@ -1,25 +1,33 @@
 {
-  "lastChangelogVersion": "0.52.6",
-  "editorPaddingX": 2,
-  "hideThinkingBlock": true,
-  "collapseChangelog": true,
+  "lastChangelogVersion": "0.65.2",
   "theme": "dracula",
   "terminal": {
-    "showImages": false
+    "showImages": false,
+    "clearOnShrink": false
   },
-  "defaultProvider": "anthropic",
-  "defaultModel": "claude-opus-4-5",
-  "defaultThinkingLevel": "medium",
-  "enabledModels": [
-    "anthropic/claude-opus-4-5",
-    "anthropic/claude-sonnet-4-5",
-    "openai/gpt-5.2-codex",
-    "openai/gpt-5.2",
-    "openrouter/google/gemini-3-pro-preview"
-  ],
-  "quietStartup": true,
-  "doubleEscapeAction": "none",
+  "images": {
+    "blockImages": false
+  },
+  "editorPaddingX": 0,
+  "doubleEscapeAction": "tree",
   "packages": [
-    "npm:pi-subagents"
-  ]
+    "npm:pi-subagents",
+    "git:github.com/ghoseb/pi-splash",
+    "git:https://github.com/badlogic/pi-diff-review",
+    "npm:pi-magic-docs"
+  ],
+  "hideThinkingBlock": false,
+  "transport": "auto",
+  "collapseChangelog": false,
+  "quietStartup": true,
+  "defaultProvider": "anthropic",
+  "defaultModel": "claude-opus-4-6",
+  "enabledModels": [
+    "anthropic/claude-sonnet-4-6",
+    "anthropic/claude-opus-4-6",
+    "openai/gpt-5.3-codex",
+    "openrouter/moonshotai/kimi-k2.5"
+  ],
+  "defaultThinkingLevel": "high",
+  "treeFilterMode": "default"
 }
