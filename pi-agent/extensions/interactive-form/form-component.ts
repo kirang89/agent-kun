@@ -17,6 +17,7 @@ import {
 	Key,
 	truncateToWidth,
 	visibleWidth,
+	wrapTextWithAnsi,
 	Input,
 	type Focusable,
 } from "@mariozechner/pi-tui";
@@ -89,15 +90,37 @@ export class InteractiveForm implements Component, Focusable {
 	}
 
 	handleInput(data: string): void {
-		const currentTab = this.tabs[this.currentTabIndex];
+		const isSubmitTab = this.currentTabIndex === this.tabs.length; // Virtual submit tab
+		const currentTab = this.tabs[this.currentTabIndex]; // undefined on submit tab
+
+		// Global navigation - always available
+		if (matchesKey(data, Key.escape)) {
+			this.done(null);
+			return;
+		}
+
+		// Submit tab handling
+		if (isSubmitTab) {
+			if (matchesKey(data, Key.enter)) {
+				this.done({ responses: this.responses });
+				return;
+			}
+			// Tab navigation back
+			if (matchesKey(data, Key.shift("tab")) || matchesKey(data, Key.left)) {
+				this.currentTabIndex = Math.max(this.currentTabIndex - 1, 0);
+				this.invalidate();
+				this.tui.requestRender();
+			}
+			return;
+		}
+
 		if (!currentTab) return;
 
 		const tabId = currentTab.id;
 		const isCustomMode = this.customInputMode[tabId];
-		const isSubmitTab = this.currentTabIndex === this.tabs.length; // Virtual submit tab
 
 		// Handle custom input mode
-		if (isCustomMode && !isSubmitTab) {
+		if (isCustomMode) {
 			if (matchesKey(data, Key.escape)) {
 				// Exit custom input mode
 				this.customInputMode[tabId] = false;
@@ -126,12 +149,6 @@ export class InteractiveForm implements Component, Focusable {
 			return;
 		}
 
-		// Global navigation
-		if (matchesKey(data, Key.escape)) {
-			this.done(null);
-			return;
-		}
-
 		// Tab navigation
 		if (matchesKey(data, Key.tab) || matchesKey(data, Key.right)) {
 			this.currentTabIndex = Math.min(this.currentTabIndex + 1, this.tabs.length);
@@ -143,15 +160,6 @@ export class InteractiveForm implements Component, Focusable {
 			this.currentTabIndex = Math.max(this.currentTabIndex - 1, 0);
 			this.invalidate();
 			this.tui.requestRender();
-			return;
-		}
-
-		// Submit tab handling
-		if (isSubmitTab) {
-			if (matchesKey(data, Key.enter)) {
-				this.done({ responses: this.responses });
-				return;
-			}
 			return;
 		}
 
@@ -296,7 +304,10 @@ export class InteractiveForm implements Component, Focusable {
 			const currentTab = this.tabs[this.currentTabIndex];
 			if (currentTab) {
 				lines.push("");
-				lines.push(truncateToWidth(`  ${t.fg("accent", t.bold(currentTab.question))}`, width));
+				const wrappedQuestion = wrapTextWithAnsi(`  ${t.fg("accent", t.bold(currentTab.question))}`, width);
+				for (const wl of wrappedQuestion) {
+					lines.push(wl);
+				}
 				lines.push("");
 
 				const response = this.responses[currentTab.id];

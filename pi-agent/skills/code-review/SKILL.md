@@ -1,6 +1,8 @@
 ---
 name: code-review
 description: Code review skill that analyzes git diffs for complexity, missing tests, documentation gaps, and new dependencies. Use when you need to review changes in a git repository. Creates a fresh context branch in pi-agent.
+metadata:
+  preferred-model: openai/gpt-5.3-codex
 ---
 
 # Code Review

@@ -58,7 +58,7 @@ Guidelines:
 			),
 		}),
 
-		async execute(toolCallId, params, onUpdate, ctx, signal) {
+		async execute(toolCallId, params, signal, onUpdate, ctx) {
 			if (!ctx.hasUI) {
 				return {
 					content: [{ type: "text", text: "Error: interactive_form requires interactive mode" }],
