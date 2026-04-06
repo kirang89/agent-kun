@@ -46,8 +46,10 @@ Custom color schemes for the pi agent TUI.
 | Theme | Description |
 |-------|-------------|
 | [catppuccin.json](pi-agent/themes/catppuccin.json) | Catppuccin color scheme |
+| [challenger-deep.json](pi-agent/themes/challenger-deep.json) | Challenger Deep color scheme |
 | [dracula.json](pi-agent/themes/dracula.json) | Dracula color scheme |
 | [gruvbox-dark.json](pi-agent/themes/gruvbox-dark.json) | Gruvbox Dark color scheme |
+| [night-owl.json](pi-agent/themes/night-owl.json) | Night Owl color scheme |
 | [rose-pine.json](pi-agent/themes/rose-pine.json) | Rosé Pine color scheme |
 
 ## Setup
