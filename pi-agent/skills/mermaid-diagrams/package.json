@@ -1,7 +1,0 @@
-{
-  "name": "mermaid-diagrams",
-  "type": "module",
-  "dependencies": {
-    "beautiful-mermaid": "latest"
-  }
-}
