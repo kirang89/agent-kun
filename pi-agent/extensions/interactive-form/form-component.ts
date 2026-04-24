@@ -11,8 +11,6 @@
 
 import {
 	type Component,
-	Container,
-	Text,
 	matchesKey,
 	Key,
 	truncateToWidth,
@@ -24,6 +22,10 @@ import {
 import type { Theme } from "@mariozechner/pi-coding-agent";
 import type { TabConfig, TabResponse, FormResult } from "./index";
 import type { TUI } from "@mariozechner/pi-tui";
+
+function fitLine(line: string, width: number, ellipsis = ""): string {
+	return truncateToWidth(line, Math.max(0, width), ellipsis);
+}
 
 export class InteractiveForm implements Component, Focusable {
 	private tui: TUI;
@@ -130,7 +132,7 @@ export class InteractiveForm implements Component, Focusable {
 			}
 			if (matchesKey(data, Key.enter)) {
 				// Confirm custom input and exit mode
-				const inputText = this.customInputs[tabId].getText().trim();
+				const inputText = this.customInputs[tabId].getValue().trim();
 				if (inputText) {
 					this.responses[tabId] = {
 						selected: [],
@@ -276,7 +278,7 @@ export class InteractiveForm implements Component, Focusable {
 		if (isSubmitTab) {
 			// Summary view
 			lines.push("");
-			lines.push(t.fg("accent", t.bold("  Summary - Review your responses:")));
+			lines.push(fitLine(t.fg("accent", t.bold("  Summary - Review your responses:")), width));
 			lines.push("");
 
 			for (const tab of this.tabs) {
@@ -298,7 +300,7 @@ export class InteractiveForm implements Component, Focusable {
 			}
 
 			lines.push("");
-			lines.push(t.fg("success", "  Press Enter to submit"));
+			lines.push(fitLine(t.fg("success", "  Press Enter to submit"), width));
 		} else {
 			// Question view
 			const currentTab = this.tabs[this.currentTabIndex];
@@ -376,7 +378,9 @@ export class InteractiveForm implements Component, Focusable {
 		lines.push("");
 
 		// Help line
-		lines.push(t.fg("dim", "  ←→/Tab: navigate tabs • ↑↓: select option • Enter/Space: toggle • Esc: cancel"));
+		lines.push(
+			fitLine(t.fg("dim", "  ←→/Tab: navigate tabs • ↑↓: select option • Enter/Space: toggle • Esc: cancel"), width),
+		);
 
 		// Bottom border
 		lines.push(t.fg("border", "─".repeat(width)));
@@ -388,45 +392,72 @@ export class InteractiveForm implements Component, Focusable {
 
 	private renderTabHeader(width: number): string {
 		const t = this.theme;
-		const parts: string[] = [];
-
-		// Back arrow
-		parts.push(this.currentTabIndex > 0 ? t.fg("muted", "← ") : "  ");
-
-		// Tabs
+		const separator = t.fg("border", "│");
+		const leadingArrow = this.currentTabIndex > 0 ? t.fg("muted", "← ") : "  ";
+		const trailingArrow = this.currentTabIndex < this.tabs.length ? t.fg("muted", " →") : "  ";
 		const allTabs = [...this.tabs.map((tab) => tab.label), "Submit"];
-
-		for (let i = 0; i < allTabs.length; i++) {
-			const label = allTabs[i];
+		const renderedTabs = allTabs.map((label, i) => {
 			const isActive = i === this.currentTabIndex;
 			const hasResponse = i < this.tabs.length && this.hasResponse(this.tabs[i].id);
 
-			let tabStr: string;
 			if (isActive) {
-				// Active tab - highlighted background
-				tabStr = t.bg("selectedBg", t.fg("accent", ` ${label} `));
-			} else if (i === this.tabs.length) {
-				// Submit tab
-				tabStr = ` ${t.fg("success", "✓")} ${label} `;
-			} else if (hasResponse) {
-				// Completed tab
-				tabStr = ` ${t.fg("success", "✓")} ${t.fg("muted", label)} `;
-			} else {
-				// Incomplete tab
-				tabStr = ` ${t.fg("dim", "○")} ${t.fg("muted", label)} `;
+				return t.bg("selectedBg", t.fg("accent", ` ${label} `));
+			}
+			if (i === this.tabs.length) {
+				return ` ${t.fg("success", "✓")} ${label} `;
+			}
+			if (hasResponse) {
+				return ` ${t.fg("success", "✓")} ${t.fg("muted", label)} `;
+			}
+			return ` ${t.fg("dim", "○")} ${t.fg("muted", label)} `;
+		});
+
+		const renderWindow = (start: number, end: number): string => {
+			const parts: string[] = [];
+
+			if (start > 0) {
+				parts.push(t.fg("dim", "…"), separator);
 			}
 
-			parts.push(tabStr);
+			for (let i = start; i <= end; i++) {
+				if (i > start) {
+					parts.push(separator);
+				}
+				parts.push(renderedTabs[i]);
+			}
 
-			if (i < allTabs.length - 1) {
-				parts.push(t.fg("border", "│"));
+			if (end < renderedTabs.length - 1) {
+				parts.push(separator, t.fg("dim", "…"));
+			}
+
+			return parts.join("");
+		};
+
+		const availableWidth = Math.max(0, width - visibleWidth(leadingArrow) - visibleWidth(trailingArrow));
+		let start = 0;
+		let end = renderedTabs.length - 1;
+
+		// Keep the active tab visible while shrinking the header to fit narrow terminals.
+		while (start < end && visibleWidth(renderWindow(start, end)) > availableWidth) {
+			const canTrimLeft = start < this.currentTabIndex;
+			const canTrimRight = end > this.currentTabIndex;
+
+			if (!canTrimLeft && canTrimRight) {
+				end--;
+				continue;
+			}
+			if (!canTrimRight && canTrimLeft) {
+				start++;
+				continue;
+			}
+			if (end - this.currentTabIndex > this.currentTabIndex - start) {
+				end--;
+			} else {
+				start++;
 			}
 		}
 
-		// Forward arrow
-		parts.push(this.currentTabIndex < this.tabs.length ? t.fg("muted", " →") : "  ");
-
-		return parts.join("");
+		return fitLine(`${leadingArrow}${renderWindow(start, end)}${trailingArrow}`, width);
 	}
 
 	private hasResponse(tabId: string): boolean {

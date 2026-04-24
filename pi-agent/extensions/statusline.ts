@@ -45,6 +45,15 @@ export default function (pi: ExtensionAPI) {
     if (enabled) setupFooter(ctx);
   });
 
+  // Clear the footer before the old session context becomes stale.
+  // Without this, the TUI render timer can fire after shutdown and invoke
+  // the captured ctx (e.g. ctx.getContextUsage()), which throws
+  // "stale after session replacement or reload". A fresh footer is
+  // re-installed by the session_start handler for the replacement session.
+  pi.on("session_shutdown", async (_event, ctx) => {
+    if (ctx.hasUI) ctx.ui.setFooter(undefined);
+  });
+
   function setupFooter(ctx: ExtensionContext) {
     if (!ctx.hasUI) return;
 
@@ -91,34 +100,12 @@ export default function (pi: ExtensionAPI) {
             leftParts.push(contextStr);
           }
 
+          // Intentionally omit the thinking level from the status line —
+          // it's controllable via /thinking and adds noise here.
           const provider = ctx.model?.provider;
           const modelId = ctx.model?.id || "no-model";
           const model = provider ? `${provider}/${modelId}` : modelId;
-          const thinkingLevel = pi.getThinkingLevel();
-
-          if (thinkingLevel && thinkingLevel !== "off") {
-            const thinkingColorMap: Record<
-              string,
-              | "thinkingMinimal"
-              | "thinkingLow"
-              | "thinkingMedium"
-              | "thinkingHigh"
-              | "thinkingXhigh"
-            > = {
-              minimal: "thinkingMinimal",
-              low: "thinkingLow",
-              medium: "thinkingMedium",
-              high: "thinkingHigh",
-              xhigh: "thinkingXhigh",
-            };
-            const thinkingColor =
-              thinkingColorMap[thinkingLevel] || "thinkingText";
-            rightParts.push(
-              theme.fg(thinkingColor, `${model} (${thinkingLevel})`)
-            );
-          } else {
-            rightParts.push(theme.fg("toolTitle", model));
-          }
+          rightParts.push(theme.fg("toolTitle", model));
 
           const home = process.env.HOME || "";
           const cwd = process.cwd();
