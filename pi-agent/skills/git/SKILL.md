@@ -87,3 +87,7 @@ git worktree remove ../myproject-new-feature
 ```
 
 Name worktree directories clearly (e.g. `myproject-feature`, `myproject-review`). Remove worktrees when done — don't accumulate stale ones.
+
+## Don'ts
+
+- Never use `git restore` (or similar commands) to revert files you didn't author

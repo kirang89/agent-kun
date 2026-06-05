@@ -6,7 +6,6 @@ This repo tracks the local pi resources I keep under `~/.pi/agent/` and sync int
 
 - custom extensions
 - reusable skills
-- agent definitions
 - themes
 - settings
 - shared `AGENTS.md` guidance
@@ -14,7 +13,6 @@ This repo tracks the local pi resources I keep under `~/.pi/agent/` and sync int
 ## Repository Layout
 
 - `AGENTS.md` — global instructions for coding agents
-- `agents/` — custom agent definitions
 - `extensions/` — local pi extensions
 - `skills/` — local pi skills
 - `themes/` — custom themes
@@ -24,38 +22,44 @@ This repo tracks the local pi resources I keep under `~/.pi/agent/` and sync int
 
 These extensions live in `extensions/` and are part of the repo:
 
+- `comment.ts` — `/comment` command to open the last assistant message in `$EDITOR` and load the result back into the editor
 - `evaluate-test-harness` — `/evaluate-test-harness` command for assessing a project's test suite against a 19-category rubric
 - `interactive-form` — `interactive_form` tool for collecting structured user input through a tabbed form UI
 - `notify.ts` — desktop notifications when pi finishes a turn and is waiting for input
+- `pi-splash.ts` — `/splash` welcome header with the pi logo, quick tips, and a loaded-resources summary
 - `refine-plan.ts` — `/refine-plan` command for interrogating and tightening implementation plans
 - `review.ts` — `/review` and `/end-review` commands for reviewing PRs, branches, commits, or uncommitted changes
-- `startup-summary.ts` — startup summary showing loaded skills/extensions and AGENTS.md status
 - `statusline.ts` — `/statusline` command for toggling a cleaner footer/status line
+- `turn-stats.ts` — `/turn-stats` command toggling a persistent per-turn token/TPS widget
+- `wiki` — `/wiki` command that builds an Obsidian research wiki for a topic from the current session via an isolated subagent
 
 ## Local Skills
 
 These skills live in `skills/` and are available to pi on demand:
 
 - `adr` — write ADRs for architecturally significant decisions
-- `code-review` — review diffs for complexity, test gaps, docs gaps, and dependency changes
+- `caveman` — ultra-compressed communication mode that cuts token usage while keeping technical accuracy
 - `context7` — fetch up-to-date library and framework documentation
-- `frontend-design` — design and implement polished frontend interfaces
-- `git` — git workflow and commit guidance
-- `github` — interact with GitHub via `gh`
+- `domain-model` — grill a plan against the existing domain model and sharpen terminology
+- `firecrawl` — fast, reliable web search, scraping, and interaction via Firecrawl
+- `frontend-design` — design and implement distinctive, production-ready frontend interfaces
+- `git` — git best practices for commits, pulling, and worktrees
+- `github` — interact with GitHub via the `gh` CLI
+- `grill-me` — interview the user relentlessly about a plan until reaching shared understanding
+- `grill-with-docs` — grilling session that challenges a plan against the domain model and docs
 - `improve-codebase-architecture` — identify architectural refactoring opportunities
-- `planning` — create plans and break work into implementable tasks
 - `playwright-cli` — browser automation and web testing workflows
+- `tufte-design-visualization` — apply Edward Tufte's principles to data visualisations and analytical UIs
 - `update-changelog` — guidance for changelog updates
-- `web-search` — lightweight web search via Jina Search API
 
 ## External Packages
 
 `settings.json` also enables these external pi packages:
 
-- `npm:pi-subagents`
-- `git:github.com/ghoseb/pi-splash`
 - `git:https://github.com/badlogic/pi-diff-review`
-- `npm:pi-magic-docs`
+- `git:github.com/picassio/pi-cc-patch`
+- `npm:pi-bash-live-view`
+- `npm:@kiranpg/pi-sentry`
 
 ## Syncing From `~/.pi/agent`
 
