@@ -5,7 +5,7 @@
  * - Active tool/operation
  * - Context usage % (color-coded by threshold)
  * - Current folder name
- * - Model name
+ * - Model name and thinking effort
  *
  * Also replaces the input editor chrome with a rounded, Amp-like prompt box
  * with the non-main working branch embedded in the top border.
@@ -439,12 +439,14 @@ export default function (pi: ExtensionAPI) {
             leftParts.push(theme.fg("muted", prLink(currentPr)));
           }
 
-          // Intentionally omit the thinking level from the status line —
-          // it's controllable via /thinking and adds noise here.
           const provider = ctx.model?.provider;
           const modelId = ctx.model?.id || "no-model";
           const model = provider ? `${provider}/${modelId}` : modelId;
+          const thinkingLevel = ctx.model?.reasoning ? pi.getThinkingLevel() : undefined;
           rightParts.push(theme.fg("toolTitle", model));
+          if (thinkingLevel) {
+            rightParts.push(theme.fg("dim", thinkingLevel));
+          }
 
           const home = process.env.HOME || "";
           const cwd = process.cwd();

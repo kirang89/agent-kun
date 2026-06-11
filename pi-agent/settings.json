@@ -1,8 +1,8 @@
 {
   "collapseChangelog": false,
-  "defaultModel": "qwen/qwen3.6-plus",
-  "defaultProvider": "openrouter",
-  "defaultThinkingLevel": "high",
+  "defaultModel": "gpt-5.5",
+  "defaultProvider": "openai-codex",
+  "defaultThinkingLevel": "medium",
   "doubleEscapeAction": "tree",
   "editorPaddingX": 1,
   "enabledModels": [
@@ -21,7 +21,7 @@
   "images": {
     "blockImages": false
   },
-  "lastChangelogVersion": "0.78.1",
+  "lastChangelogVersion": "0.79.1",
   "packages": [
     "git:https://github.com/badlogic/pi-diff-review",
     "git:github.com/picassio/pi-cc-patch",
