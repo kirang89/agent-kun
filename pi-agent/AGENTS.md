@@ -11,6 +11,10 @@
 - Think before you code — Design is considering multiple options. Understand problems deeply before jumping to solutions.
 - Validate a bug by reproducing it first with a test and then fixing it to verify the fix.
 
+# Dependencies
+
+- Always prefer pinning dependencies
+
 # Documentation
 
 - Every new feature addition should update all relevant documentation
@@ -30,6 +34,10 @@
 - When doing a plain-text search for file contents, use `rg` (ripgrep) instead of `grep`
 - Use `fd` instead of `find` when searching for files
 <!-- - Always prefer doing narrow searches with the available information (e.g. searching within files of a specific extension instead of wildcard equivalent). -->
+
+# Responses
+
+- Respond and report information in an extremely concise way. Sacrifice grammar for the sake of concision.
 
 # Don'ts
 
